@@ -13,7 +13,7 @@ export async function GET(
   const id = params.id;
 
   try {
-    const response = await fetch(`http://www.omdbapi.com/?apikey=${OMDB_API_KEY}&t=${id}`);
+    const response = await fetch(`https://www.omdbapi.com/?apikey=${OMDB_API_KEY}&t=${id}`);
     
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
