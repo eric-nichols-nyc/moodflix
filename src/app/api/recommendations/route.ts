@@ -1,36 +1,79 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
+import { generateObject } from 'ai';
+import { openai } from '@ai-sdk/openai';
 
 // Define the schema for the request body
 const moodAssessmentSchema = z.object({
-  mood: z.number().min(0).max(100),
+  moodValue: z.number().min(0).max(500),
+  anxietyValue: z.number().min(0).max(500),
+  energyValue: z.number().min(0).max(500),
   yearRange: z.tuple([z.number().min(1900).max(2024), z.number().min(1900).max(2024)]),
+});
+
+// Define the schema for the AI-generated response
+const movieRecommendationsSchema = z.object({
+  stateSummary: z.string(),
+  recommendations: z.array(z.object({
+    title: z.string(),
+  })),
+  choicesSumnmary: z.string(),
 });
 
 type MoodAssessment = z.infer<typeof moodAssessmentSchema>;
 
-// Mock movie database
-const mockMovies = [
-  { id: 1, title: "Happy Go Lucky", year: 2008, mood: 80 },
-  { id: 2, title: "The Shawshank Redemption", year: 1994, mood: 60 },
-  { id: 3, title: "Inception", year: 2010, mood: 70 },
-  { id: 4, title: "The Dark Knight", year: 2008, mood: 65 },
-  { id: 5, title: "Forrest Gump", year: 1994, mood: 75 },
-];
+function analyzeState(moodValue: number, anxietyValue: number, energyValue: number): string {
+  const mood = analyzeMood(moodValue);
+  const anxiety = analyzeAnxiety(anxietyValue);
+  const energy = analyzeEnergy(energyValue);
+  return `Mood: ${mood}, Anxiety: ${anxiety}, Energy: ${energy}`;
+}
 
-function getRecommendations(assessment: MoodAssessment) {
-  const { mood, yearRange } = assessment;
+function analyzeMood(value: number): string {
+  if (value < 100) return "Very sad";
+  if (value < 200) return "Sad";
+  if (value < 300) return "Neutral";
+  if (value < 400) return "Happy";
+  return "Very happy";
+}
+
+function analyzeAnxiety(value: number): string {
+  if (value < 100) return "Very calm";
+  if (value < 200) return "Calm";
+  if (value < 300) return "Neutral";
+  if (value < 400) return "Anxious";
+  return "Very anxious";
+}
+
+function analyzeEnergy(value: number): string {
+  if (value < 100) return "Very low energy";
+  if (value < 200) return "Low energy";
+  if (value < 300) return "Moderate energy";
+  if (value < 400) return "High energy";
+  return "Very high energy";
+}
+
+async function getMovieRecommendations(assessment: MoodAssessment) {
+  const { moodValue, anxietyValue, energyValue, yearRange } = assessment;
   const [startYear, endYear] = yearRange;
+  const stateDescription = analyzeState(moodValue, anxietyValue, energyValue);
 
-  return mockMovies
-    .filter(movie => 
-      movie.year >= startYear && 
-      movie.year <= endYear &&
-      Math.abs(movie.mood - mood) <= 20
-    )
-    .sort((a, b) => Math.abs(a.mood - mood) - Math.abs(b.mood - mood))
-    .slice(0, 5)
-    .map(({ id, title, year }) => ({ id, title, year }));
+  const prompt = `
+    Analyze the following emotional state and provide a friendly and personal response:
+    1. Explain in a friendly, conversational tone the overall state, but don't use the word energy or anxiety (1-2 sentence)
+    2. A list of 5 movie recommendations that match this state, released between ${startYear} and ${endYear}
+    3. Explain in a friendly, conversational tone why the following movies are recommended: (1 sentence each)
+    4. Provide a brief summary (about 3-4 sentences) that connects the movie choices to the user's mood.
+    Emotional state: "${stateDescription}"
+  `;
+
+  const { object } = await generateObject({
+    model: openai('gpt-3.5-turbo-1106'),
+    schema: movieRecommendationsSchema,
+    prompt: prompt,
+  });
+
+  return object;
 }
 
 export async function POST(req: NextRequest) {
@@ -41,13 +84,13 @@ export async function POST(req: NextRequest) {
     // Validate the body against our schema
     const validatedData = moodAssessmentSchema.parse(body);
 
-    // Get movie recommendations based on the mood assessment
-    const recommendations = getRecommendations(validatedData);
+    // Get AI-powered state analysis and movie recommendations
+    const result = await getMovieRecommendations(validatedData);
 
     // Return the recommendations
     return NextResponse.json({
-      message: "Recommendations processed successfully",
-      recommendations,
+      message: "Emotional state analyzed and recommendations generated successfully",
+      ...result,
     });
 
   } catch (error) {
@@ -59,6 +102,7 @@ export async function POST(req: NextRequest) {
       );
     }
     // For any other error, return a generic error message
+    console.error("Error:", error);
     return NextResponse.json(
       { error: "An unexpected error occurred" },
       { status: 500 }
