@@ -16,11 +16,6 @@ const mockMovies = [
   { id: 3, title: "Inception", year: 2010, mood: 70 },
   { id: 4, title: "The Dark Knight", year: 2008, mood: 65 },
   { id: 5, title: "Forrest Gump", year: 1994, mood: 75 },
-  { id: 6, title: "The Matrix", year: 1999, mood: 68 },
-  { id: 7, title: "Pulp Fiction", year: 1994, mood: 72 },
-  { id: 8, title: "Interstellar", year: 2014, mood: 85 },
-  { id: 9, title: "The Avengers", year: 2012, mood: 78 },
-  { id: 10, title: "Schindler's List", year: 1993, mood: 40 },
 ];
 
 function getRecommendations(assessment: MoodAssessment) {

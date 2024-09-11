@@ -25,7 +25,7 @@ const MovieCard: React.FC<MovieCardProps> = ({ movie }) => {
   useEffect(() => {
     const fetchMovieDetails = async () => {
       try {
-        const response = await fetch(`/api/moviedetails/${movie.id}`);
+        const response = await fetch(`/api/moviedetails/${movie.title}`);
         const data = await response.json();
         if (!data || typeof data !== 'object') {
           throw new Error('Invalid response from server');

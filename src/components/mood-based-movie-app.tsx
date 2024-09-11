@@ -32,6 +32,7 @@ const MoodBasedMovieApp = () => {
       }
 
       const data = await response.json();
+      console.log(data.recommendations);
       setMovies(data.recommendations || []);
       setError(null);
     } catch (err) {
