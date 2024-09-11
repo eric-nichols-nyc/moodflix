@@ -4,10 +4,11 @@ import { Film, Search } from 'lucide-react';
 import MovieList from './movie-list';
 import MoodAssessment from './mood-assessment';
 import Intro from './intro';
-import { Assessment, Movie } from '../../types'
+import { Assessment, MovieRecommendation, RecommendationResponse } from '../../types'
 
 const MoodBasedMovieApp = () => {
-  const [movies, setMovies] = useState<Movie[]>([]);
+  const [movies, setMovies] = useState<MovieRecommendation[]>([]);
+  const [stateSummary, setStateSummary] = useState<string | null>(null);
   const [choicesSummary, setChoicesSummary] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -26,14 +27,16 @@ const MoodBasedMovieApp = () => {
         throw new Error(errorData.error || 'Failed to get recommendations');
       }
 
-      const data = await response.json();
+      const data: RecommendationResponse = await response.json();
       console.log(data);
       setMovies(data.recommendations || []);
-      setChoicesSummary(assessment.choicesSummary);
+      setStateSummary(data.stateSummary);
+      setChoicesSummary(data.choicesSummary);
       setError(null);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An unexpected error occurred');
       setMovies([]);
+      setStateSummary(null);
       setChoicesSummary(null);
     }
   };
@@ -70,9 +73,16 @@ const MoodBasedMovieApp = () => {
           </section>
         )}
 
+        {stateSummary && (
+          <section className="mb-8">
+            <h2 className="text-2xl font-semibold mb-2">Your Current State</h2>
+            <p className="text-lg">{stateSummary}</p>
+          </section>
+        )}
+
         {choicesSummary && (
           <section className="mb-8">
-            <h2 className="text-2xl font-semibold mb-2">Your Mood Summary</h2>
+            <h2 className="text-2xl font-semibold mb-2">Movie Choices Summary</h2>
             <p className="text-lg">{choicesSummary}</p>
           </section>
         )}
