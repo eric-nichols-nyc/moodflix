@@ -4,6 +4,7 @@ import { Film, Search } from 'lucide-react';
 import MovieList from './movie-list';
 import MoodAssessment from './mood-assessment';
 import Intro from './intro';
+import {Assessment} from '../../types'
 
 type Movie = {
     id: number;
@@ -16,7 +17,7 @@ const MoodBasedMovieApp = () => {
   const [movies, setMovies] = useState<Movie[]>([]);
   const [error, setError] = useState<string | null>(null);
 
-  const handleMoodAssess = async (assessment: { mood: number, yearRange: [number, number] }) => {
+  const handleMoodAssess = async (assessment:Assessment) => {
     try {
       const response = await fetch('/api/recommendations', {
         method: 'POST',
@@ -32,7 +33,7 @@ const MoodBasedMovieApp = () => {
       }
 
       const data = await response.json();
-      console.log(data.recommendations);
+      console.log(data);
       setMovies(data.recommendations || []);
       setError(null);
     } catch (err) {

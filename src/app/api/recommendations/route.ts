@@ -8,7 +8,6 @@ const moodAssessmentSchema = z.object({
   moodValue: z.number().min(0).max(500),
   anxietyValue: z.number().min(0).max(500),
   energyValue: z.number().min(0).max(500),
-  yearRange: z.tuple([z.number().min(1900).max(2024), z.number().min(1900).max(2024)]),
 });
 
 // Define the schema for the AI-generated response
@@ -16,6 +15,7 @@ const movieRecommendationsSchema = z.object({
   stateSummary: z.string(),
   recommendations: z.array(z.object({
     title: z.string(),
+    description: z.string(),
   })),
   choicesSumnmary: z.string(),
 });
@@ -54,14 +54,13 @@ function analyzeEnergy(value: number): string {
 }
 
 async function getMovieRecommendations(assessment: MoodAssessment) {
-  const { moodValue, anxietyValue, energyValue, yearRange } = assessment;
-  const [startYear, endYear] = yearRange;
+  const { moodValue, anxietyValue, energyValue } = assessment;
   const stateDescription = analyzeState(moodValue, anxietyValue, energyValue);
 
   const prompt = `
     Analyze the following emotional state and provide a friendly and personal response:
     1. Explain in a friendly, conversational tone the overall state, but don't use the word energy or anxiety (1-2 sentence)
-    2. A list of 5 movie recommendations that match this state, released between ${startYear} and ${endYear}
+    2. A list of 4 movie recommendations that match this state
     3. Explain in a friendly, conversational tone why the following movies are recommended: (1 sentence each)
     4. Provide a brief summary (about 3-4 sentences) that connects the movie choices to the user's mood.
     Emotional state: "${stateDescription}"

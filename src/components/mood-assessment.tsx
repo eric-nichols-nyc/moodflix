@@ -1,38 +1,42 @@
-import React, { useState } from 'react';
-import { Slider } from "@/components/ui/slider"
-import { Label } from "@/components/ui/label"
+import React, { useState } from "react";
+import { Slider } from "@/components/ui/slider";
+import { Label } from "@/components/ui/label";
 
 interface MoodAssessmentProps {
   onMoodAssess: (assessment: {
-    mood: number;
-    yearRange: [number, number];
+    moodValue: number;
+    anxietyValue:number;
+    energyValue: number;
   }) => void;
 }
 
 const MoodAssessment: React.FC<MoodAssessmentProps> = ({ onMoodAssess }) => {
-  const [mood, setMood] = useState(50);
-  const [releaseYear, setReleaseYear] = useState([1970, 2024]);
+  const [moodValue, setMoodValue] = useState(250);
+  const [anxietyValue, setAnxietyValue] = useState(250);
+  const [energyValue, setEnergyValue] = useState(250);
   const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async () => {
     try {
-      onMoodAssess({ mood, yearRange: releaseYear as [number, number] });
+      onMoodAssess({ moodValue, anxietyValue, energyValue });
       setError(null);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An unexpected error occurred');
+      setError(
+        err instanceof Error ? err.message : "An unexpected error occurred"
+      );
     }
   };
 
   return (
     <div className="space-y-6">
-      <div>
+      <div className="mb-4">
         <Label>Mood</Label>
-        <Slider 
-          min={0} 
-          max={100} 
-          step={1} 
-          value={[mood]}
-          onValueChange={(value) => setMood(value[0])}
+        <Slider
+          min={0}
+          max={100}
+          step={1}
+          value={[moodValue]}
+          onValueChange={(value) => setMoodValue(value[0])}
         />
         <div className="flex justify-between text-sm text-gray-500">
           <span>Sad</span>
@@ -40,30 +44,34 @@ const MoodAssessment: React.FC<MoodAssessmentProps> = ({ onMoodAssess }) => {
         </div>
       </div>
 
-      <div>
-        <Label>Release Year Range</Label>
+      <div className="mb-4">
+        <label>Anxiety</label>
         <Slider
-          defaultValue={releaseYear}
-          max={2024}
-          min={1900}
+          min={0}
+          max={500}
           step={1}
-          onValueChange={setReleaseYear}
+          value={[anxietyValue]}
+          onValueChange={(value) => setAnxietyValue(value[0])}
         />
-        <div className="mt-2 flex justify-between text-sm text-gray-600">
-          <span>{releaseYear[0]}</span>
-          <span>{releaseYear[1]}</span>
-        </div>
       </div>
 
-      {error && (
-        <div className="text-red-500 text-sm">{error}</div>
-      )}
+      <div className="mb-4">
+        <label>Energy</label>
+        <Slider
+          min={0}
+          max={500}
+          step={1}
+          value={[energyValue]}
+          onValueChange={(value) => setEnergyValue(value[0])}
+        />
+      </div>
+      {error && <div className="text-red-500 text-sm">{error}</div>}
 
       <button
         onClick={handleSubmit}
-        className="w-full px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+        className="bg-blue-500 text-white px-4 py-2 rounded"
       >
-        Get Movie Recommendations
+        Analyze and Get Recommendations
       </button>
     </div>
   );
