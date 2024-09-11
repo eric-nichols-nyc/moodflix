@@ -61,7 +61,7 @@ async function getMovieRecommendations(assessment: MoodAssessment) {
     Analyze the following emotional state and provide a friendly and personal response:
     1. Explain in a friendly, conversational tone the overall state, but don't use the word energy or anxiety (1-2 sentence)
     2. A list of 4 movie recommendations that match this state
-    3. Explain in a friendly, conversational tone why the following movies are recommended: (1 sentence each)
+    3. Explain in a friendly, conversational tone why the following movies reflect the users mood: (1 sentence each)
     4. Provide a brief summary (about 3-4 sentences) that connects the movie choices to the user's mood.
     Emotional state: "${stateDescription}"
   `;

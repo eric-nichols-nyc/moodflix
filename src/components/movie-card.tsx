@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
-import { Movie } from "../../types";
+import { MovieRecommendation } from "../../types";
 import Image from 'next/image';
 
 interface MovieCardProps {
-  movie: Movie;
+  movie: MovieRecommendation;
 }
 
 interface MovieDetails {
@@ -25,7 +25,7 @@ const MovieCard: React.FC<MovieCardProps> = ({ movie }) => {
   useEffect(() => {
     const fetchMovieDetails = async () => {
       try {
-        const response = await fetch(`/api/moviedetails/${movie.title}`);
+        const response = await fetch(`/api/moviedetails/${encodeURIComponent(movie.title)}`);
         const data = await response.json();
         if (!data || typeof data !== 'object') {
           throw new Error('Invalid response from server');
@@ -41,24 +41,33 @@ const MovieCard: React.FC<MovieCardProps> = ({ movie }) => {
     };
 
     fetchMovieDetails();
-  }, [movie.id]);
+  }, [movie.title]);
 
   const handleImageError = () => {
     setImgSrc('/images/intro.png'); // Make sure this placeholder image exists in your public folder
   };
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return (
+      <Card className="overflow-hidden w-full max-w-sm mx-auto bg-gray-100 dark:bg-gray-800 animate-pulse">
+        <div className="h-64 bg-gray-200 dark:bg-gray-700"></div>
+        <CardContent className="p-4">
+          <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded w-3/4 mb-2"></div>
+          <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-full mb-2"></div>
+          <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-2/3"></div>
+        </CardContent>
+      </Card>
+    );
   }
 
   if (error) {
-    return <div>Error: {error}</div>;
+    return <div className="text-red-500 text-center">Error: {error}</div>;
   }
 
   return (
-    <Card className="overflow-hidden">
-      <div className="flex">
-        <div className="w-1/3 relative h-48">
+    <Card className="overflow-hidden w-full max-w-sm mx-auto hover-scale shadow-lg">
+      <div className="flex flex-col">
+        <div className="relative h-64 w-full">
           {imgSrc && (
             <Image
               src={imgSrc}
@@ -66,16 +75,25 @@ const MovieCard: React.FC<MovieCardProps> = ({ movie }) => {
               layout="fill"
               objectFit="cover"
               onError={handleImageError}
+              className="transition-opacity duration-300 ease-in-out"
             />
           )}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
         </div>
-        <CardContent className="w-2/3 p-4 flex flex-col">
-          <h3 className="text-lg font-semibold mb-2">{movieDetails?.title}</h3>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">Year: {movieDetails?.year}</p>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">Genre: {movieDetails?.genre}</p>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">IMDb Rating: {movieDetails?.imdbRating}</p>
-          {movieDetails?.plot && (
-            <p className="text-sm text-gray-600 dark:text-gray-300 mt-2">{movieDetails.plot}</p>
+        <CardContent className="p-4 flex flex-col bg-card text-card-foreground">
+          <h3 className="text-xl font-semibold mb-2 gradient-text">{movie.title}</h3>
+          <p className="text-sm text-muted-foreground mb-2">{movie.description}</p>
+          {movieDetails && (
+            <div className="mt-2 space-y-1">
+              <p className="text-sm"><span className="font-medium">Year:</span> {movieDetails.year}</p>
+              <p className="text-sm"><span className="font-medium">Genre:</span> {movieDetails.genre}</p>
+              <p className="text-sm">
+                <span className="font-medium">IMDb:</span> 
+                <span className="ml-1 px-2 py-1 bg-yellow-400 text-black rounded-full text-xs font-bold">
+                  {movieDetails.imdbRating}
+                </span>
+              </p>
+            </div>
           )}
         </CardContent>
       </div>

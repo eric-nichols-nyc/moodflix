@@ -5,10 +5,10 @@ import ThemeToggle from './theme-toggle';
 
 const Header: React.FC = () => {
   return (
-    <header className="h-[60px] flex justify-between items-center px-4 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+    <header className="fixed top-0 left-0 right-0 h-[60px] flex justify-between items-center px-4 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 z-10">
       <Link href="/" className="flex items-center">
         <Film className="w-6 h-6 mr-2 text-blue-500" />
-        <span className="font-bold text-gray-800 dark:text-white">MoodFlix</span>
+        <span className="font-bold text-2xl gradient-text">MoodFlix</span>
       </Link>
       <div className="flex items-center space-x-4">
         <ThemeToggle />
