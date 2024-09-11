@@ -17,7 +17,7 @@ const movieRecommendationsSchema = z.object({
     title: z.string(),
     description: z.string(),
   })),
-  choicesSumnmary: z.string(),
+  choicesSummary: z.string(),
 });
 
 type MoodAssessment = z.infer<typeof moodAssessmentSchema>;

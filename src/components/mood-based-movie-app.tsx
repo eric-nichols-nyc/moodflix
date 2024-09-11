@@ -4,20 +4,14 @@ import { Film, Search } from 'lucide-react';
 import MovieList from './movie-list';
 import MoodAssessment from './mood-assessment';
 import Intro from './intro';
-import {Assessment} from '../../types'
-
-type Movie = {
-    id: number;
-    title: string;
-    year: number;
-    rating: number;
-};
+import { Assessment, Movie } from '../../types'
 
 const MoodBasedMovieApp = () => {
   const [movies, setMovies] = useState<Movie[]>([]);
+  const [choicesSummary, setChoicesSummary] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const handleMoodAssess = async (assessment:Assessment) => {
+  const handleMoodAssess = async (assessment: Assessment) => {
     try {
       const response = await fetch('/api/recommendations', {
         method: 'POST',
@@ -35,10 +29,12 @@ const MoodBasedMovieApp = () => {
       const data = await response.json();
       console.log(data);
       setMovies(data.recommendations || []);
+      setChoicesSummary(assessment.choicesSummary);
       setError(null);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An unexpected error occurred');
       setMovies([]);
+      setChoicesSummary(null);
     }
   };
 
@@ -71,6 +67,13 @@ const MoodBasedMovieApp = () => {
         {error && (
           <section className="mb-8">
             <div className="text-red-500">{error}</div>
+          </section>
+        )}
+
+        {choicesSummary && (
+          <section className="mb-8">
+            <h2 className="text-2xl font-semibold mb-2">Your Mood Summary</h2>
+            <p className="text-lg">{choicesSummary}</p>
           </section>
         )}
         

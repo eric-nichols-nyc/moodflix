@@ -5,8 +5,9 @@ import { Label } from "@/components/ui/label";
 interface MoodAssessmentProps {
   onMoodAssess: (assessment: {
     moodValue: number;
-    anxietyValue:number;
+    anxietyValue: number;
     energyValue: number;
+    choicesSummary: string;
   }) => void;
 }
 
@@ -18,7 +19,22 @@ const MoodAssessment: React.FC<MoodAssessmentProps> = ({ onMoodAssess }) => {
 
   const handleSubmit = async () => {
     try {
-      onMoodAssess({ moodValue, anxietyValue, energyValue });
+      // Simulating API call to get choicesSummary
+      const response = await fetch('/api/recommendations', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ moodValue, anxietyValue, energyValue }),
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to get recommendations');
+      }
+
+      const data = await response.json();
+
+      onMoodAssess({ moodValue, anxietyValue, energyValue, choicesSummary: data.choicesSummary });
       setError(null);
     } catch (err) {
       setError(

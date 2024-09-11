@@ -9,4 +9,5 @@ export type Assessment = {
     moodValue: number;
     anxietyValue: number;
     energyValue: number;
+    choicesSummary: string;
 };
