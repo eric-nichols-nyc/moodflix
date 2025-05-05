@@ -184,3 +184,17 @@ input[type="range"]::-moz-range-thumb, .custom-slider::-moz-range-thumb {
 .content-below-header {
   padding-top: var(--header-height);
 }
+/* styles/slider-custom.css */
+.custom-slider .slider-thumb {
+  width: 32px !important;      /* Make the thumb bigger */
+  height: 32px !important;
+  background: #3b82f6 !important; /* Eye-catching color (blue) */
+  border: 3px solid #fff !important;
+  box-shadow: 0 0 8px #3b82f6, 0 2px 8px rgba(0,0,0,0.15);
+  transition: transform 0.2s;
+}
+
+.custom-slider .slider-thumb:active {
+  transform: scale(1.15);
+  background: #2563eb !important; /* Even more eye-catching on active */
+}

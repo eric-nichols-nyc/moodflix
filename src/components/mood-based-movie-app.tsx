@@ -1,13 +1,11 @@
 "use client"
 import React, { useState } from 'react';
-import { Search } from 'lucide-react';
 import MovieList from './movie-list';
 import MoodAssessment from './mood-assessment';
 import Intro from './intro';
 import Header from './header';
 import { Assessment, MovieRecommendation, RecommendationResponse } from '../../types'
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 
 const MoodBasedMovieApp = () => {
   const [movies, setMovies] = useState<MovieRecommendation[]>([]);
@@ -52,15 +50,6 @@ const MoodBasedMovieApp = () => {
       <Header  />
       <div className="flex-1 overflow-y-auto content-below-header">
         <div className="container-desktop mx-auto py-8 space-y-8">
-          <div className="relative w-full sm:w-64 mx-auto">
-            <Input
-              type="text"
-              placeholder="Search movies..."
-              className="pl-10 pr-4 py-2 w-full custom-button"
-            />
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-          </div>
-          
           <main className="space-y-8">
             <Card className="hover-scale">
               <CardContent className="pt-6">
