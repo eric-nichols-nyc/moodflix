@@ -1,24 +1,19 @@
 import React from 'react';
 import Image from 'next/image';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Car } from 'lucide-react';
+import { Card, CardContent } from "@/components/ui/card";
 
 const Intro: React.FC = () => {
   return (
     <div className="flex flex-col md:flex-row gap-6 intro-component">
-      <Card className="w-full md:w-1/2">
-        <CardHeader>
-            <Image
+       <Card className="w-full md:w-1/2">
+        <CardContent className="p-6">
+          <Image
             src="/images/intro.png"
             alt="MoodFlix Intro"
-            width={640}
+            width={300}
             height={360}
             className="rounded-lg mb-4"
           />
-        </CardHeader>
-        </Card>
-        <Card>
-        <CardContent className="p-6">
           <h1 className="text-2xl font-bold mb-4 gradient-text custom-gradient">Welcome to MoodFlix</h1>
           <p className="text-gray-700 dark:text-gray-200">
             MoodFlix is your personal movie recommendation engine that suggests films based on your current mood.
@@ -27,7 +22,7 @@ const Intro: React.FC = () => {
         </CardContent>
       </Card>
       
-      <Card className="w-full">
+      <Card className="w-full md:w-1/2">
         <CardContent className="p-6 flex flex-col justify-between h-full">
           <div>
             <h2 className="text-xl font-semibold mb-4 text-gray-800 dark:text-white">How it works</h2>
